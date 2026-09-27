@@ -122,13 +122,6 @@ body {
   border: 1px solid rgba(120, 90, 20, 0.35);
 }
 .coin-face--back { transform: rotateY(180deg); }
-.coin-rim {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  transform: translateZ(-1px);
-  background: #b08a37;
-}
 .coin--tails { transform: rotateY(180deg); }
 .coin--flipping { animation: coin-flip 0.65s cubic-bezier(0.3, 0.6, 0.4, 1) both; }
 @keyframes coin-flip {

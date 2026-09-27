@@ -19,7 +19,6 @@ export function Coin({ face, flipping = false, idle = false, delayMs = 0, classN
         className={`coin ${flipping ? "coin--flipping" : ""} ${tails ? "coin--tails" : ""}`}
         style={{ animationDelay: `${delayMs}ms` }}
       >
-        <span className="coin-rim" />
         <span className="coin-face">
           <span className="zh text-3xl font-semibold text-ink/75">福</span>
         </span>
