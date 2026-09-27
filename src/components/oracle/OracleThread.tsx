@@ -81,7 +81,7 @@ function AnswerBubble({ answer }: { answer: string }) {
       </span>
       <div className="card max-w-[92%] px-6 py-5 sm:max-w-[80%]">
         {answer.split(/\n{2,}/).map((para, i) => (
-          <p key={i} className="text-[15px] leading-relaxed text-charcoal [&+&]:mt-3">
+          <p key={i} className="oracle-answer text-[15px] leading-relaxed text-charcoal [&+&]:mt-3">
             {para}
           </p>
         ))}
