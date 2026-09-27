@@ -16,14 +16,16 @@ export function SiteNav() {
   const pathname = usePathname();
   return (
     <header className="sticky top-0 z-40 border-b border-mist/60 bg-cream/80 backdrop-blur">
-      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-3">
+      <div className="mx-auto flex h-16 w-full max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-3">
           <span className="zh flex h-9 w-9 items-center justify-center rounded-full border border-gold/60 text-lg text-ink">
             易
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-[0.28em] text-ink">Fortune Toss</span>
+          <span className="hidden text-[11px] font-semibold uppercase tracking-[0.28em] text-ink sm:inline">
+            Fortune Toss
+          </span>
         </Link>
-        <nav className="flex items-center gap-1 text-sm">
+        <nav className="flex min-w-0 items-center gap-1 overflow-x-auto text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {LINKS.map((l) => {
             const active = l.href === "/" ? pathname === "/" : pathname.startsWith(l.href);
             return (
