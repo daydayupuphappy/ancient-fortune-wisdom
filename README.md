@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ancient Fortune Wisdom
 
-## Getting Started
+**Toss the coins. Read the moment.**
+A daily reflection inspired by the I Ching (易经).
 
-First, run the development server:
+Core loop: **Toss → Hexagram → AI interpretation → Lucky timing → Calendar → Share**
+
+> Entertainment and self-reflection only. Never present readings as predictions or as medical, financial, or legal advice. Use "may suggest", "can be a useful moment to consider", "the symbolism emphasizes".
+
+Full product spec: [`docs/SPEC.md`](docs/SPEC.md).
+
+## Stack
+
+- Next.js 16 (App Router, `src/` dir, Turbopack), React 19, TypeScript
+- Tailwind CSS v4 (tokens in `src/app/globals.css`)
+- Vitest for unit tests
+- Persistence (MVP): `localStorage` via `src/lib/storage.ts`
+- AI: OpenAI-compatible chat completions via `POST /api/interpret` (falls back to a deterministic local interpretation when `OPENAI_API_KEY` is unset)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev        # http://localhost:3000
+npm test           # vitest
+npm run typecheck  # tsc --noEmit
+npm run lint       # eslint
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Env (optional): `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `OPENAI_MODEL` (default `gpt-4o-mini`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Architecture
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  lib/iching/
+    trigrams.ts   # 八卦 — 8 trigrams (chinese, pinyin, element, direction, family, lines)
+    hexagrams.ts  # all 64 hexagrams (King Wen order), HEXAGRAMS, getHexagram, hexagramFromLines
+    toss.ts       # three-coin method: castHexagram, castFromValues, resolveCast, seededRng
+    energy.ts     # deterministic daily score/label/theme/attributes, themeForDate (calendar)
+  lib/reading.ts  # StoredReading (persisted) + Reading (hydrated), hydrateReading, newStoredReading
+  lib/storage.ts  # localStorage CRUD, getTodaysReading, computeStreak
+  lib/ai/oracle.ts# system prompt, buildReadingContext, interpret() (LLM or fallback)
+  app/api/interpret/route.ts  # POST { lineValues, date?, question?, history? } -> { text, source }
+  components/
+    SiteNav.tsx, HexagramLines.tsx
+  app/  (/, /reading, /oracle, /calendar, /history, /explore, /share)
+```
 
-## Learn More
+### Invariants
 
-To learn more about Next.js, take a look at the following resources:
+- The hexagram is **always** derived from six coin tosses (`lineValues` 6/7/8/9, bottom → top). The LLM never picks a hexagram.
+- Only `lineValues` + timestamps are persisted; everything else is re-derived via `hydrateReading` so the data model stays tiny and stable.
+- Line 1 = bottom. `HexagramLines` renders bottom-to-top visually via `flex-col-reverse`.
+- Daily energy/attributes come from `deriveDailyEnergy(cast, date)` and are deterministic. Present them as playful symbolic prompts.
+- Chinese characters use the `.zh` class (Noto Serif SC); headlines use `.display` (Cormorant Garamond); UI text is Inter.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Design tokens
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Cream background, ink/charcoal type, gold + jade accents, generous whitespace, subtle motion. Utility classes: `.card`, `.btn-primary`, `.btn-secondary`, `.eyebrow`, `.fade-up`. No casino/neon/crystal-ball imagery.
 
-## Deploy on Vercel
+## Contributing (parallel work)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Each feature lives in its own route folder + components, so features can be developed in parallel with minimal conflicts. Shared modules under `src/lib` are the contract; extend them additively (new exports) rather than changing existing signatures. Add tests next to the code in `__tests__/`.

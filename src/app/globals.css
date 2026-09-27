@@ -1,26 +1,88 @@
 @import "tailwindcss";
 
+/*
+  Design tokens — "Modern East Asian minimalism".
+  Cream background, charcoal type, gold + jade accents. Keep it calm.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cream: #f7f3ea;
+  --cream-deep: #efe8d8;
+  --paper: #fffdf8;
+  --ink: #1c1a17;
+  --charcoal: #3a3632;
+  --stone: #8a837a;
+  --mist: #d9d2c3;
+  --gold: #c9a24a;
+  --gold-soft: #e8d8a8;
+  --jade: #6f9a86;
+  --jade-soft: #cfe0d6;
+  --vermilion: #b4472f;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cream: var(--cream);
+  --color-cream-deep: var(--cream-deep);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-charcoal: var(--charcoal);
+  --color-stone: var(--stone);
+  --color-mist: var(--mist);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-jade: var(--jade);
+  --color-jade-soft: var(--jade-soft);
+  --color-vermilion: var(--vermilion);
+
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-noto-serif-sc);
+  --font-display: var(--font-cormorant);
+
+  --shadow-soft: 0 10px 40px -20px rgba(28, 26, 23, 0.25);
+  --radius-card: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--cream);
+  color: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Chinese characters: elegant serif */
+.zh {
+  font-family: var(--font-noto-serif-sc), "Songti SC", "Noto Serif CJK SC", serif;
+}
+
+/* Headlines: refined display serif */
+.display {
+  font-family: var(--font-cormorant), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--mist);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-medium tracking-[0.18em] text-cream uppercase transition hover:bg-charcoal active:scale-[0.98];
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-ink/15 bg-paper px-6 py-3 text-sm font-medium text-ink transition hover:border-gold hover:text-charcoal;
+}
+
+.eyebrow {
+  @apply text-[11px] font-medium uppercase tracking-[0.22em] text-stone;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.6s ease-out both; }
