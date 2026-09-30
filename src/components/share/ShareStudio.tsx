@@ -204,7 +204,7 @@ export function ShareStudio({ readingId }: { readingId?: string }) {
         </p>
 
         <p className="mt-6 text-xs text-stone">
-          1080 × 1920 portrait — looks great on Instagram Stories, WhatsApp, X, LinkedIn, WeChat.
+          9:16 portrait, exported at 2× (2160 × 3840) — looks great on Instagram Stories, WhatsApp, X, LinkedIn, WeChat.
         </p>
         <p className="mt-2 text-xs text-stone">For reflection, not prediction.</p>
       </div>
