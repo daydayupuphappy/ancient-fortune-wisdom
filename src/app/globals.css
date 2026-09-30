@@ -154,3 +154,13 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .coin, .coin--flipping, .coin-idle, .ring-progress, .fade-up { animation: none !important; transition: none !important; }
 }
+
+/* Oracle: slow breathing hexagram while an answer is being composed */
+@keyframes oracle-breathe {
+  0%, 100% { opacity: 0.35; transform: scale(0.97); }
+  50% { opacity: 1; transform: scale(1); }
+}
+.oracle-breathe { animation: oracle-breathe 2.4s ease-in-out infinite; }
+
+/* Oracle answers mix Latin and CJK; fall back to the serif for characters Inter lacks */
+.oracle-answer { font-family: var(--font-inter), var(--font-noto-serif-sc), system-ui, sans-serif; }

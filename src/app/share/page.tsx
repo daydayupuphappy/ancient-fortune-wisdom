@@ -1,9 +1,12 @@
-export default function SharePage() {
-  return (
-    <section className="mx-auto max-w-3xl px-6 py-20 text-center fade-up">
-      <p className="eyebrow">Coming soon</p>
-      <h1 className="display mt-3 text-4xl">Share</h1>
-      <p className="mt-4 text-stone">This screen is being built. See README.md for the feature spec.</p>
-    </section>
-  );
+import type { Metadata } from "next";
+import { ShareStudio } from "@/components/share/ShareStudio";
+
+export const metadata: Metadata = {
+  title: "Share your fortune card — Fortune Toss",
+  description: "Turn today's hexagram into a portrait card for Stories, chats, and feeds.",
+};
+
+export default async function SharePage(props: PageProps<"/share">) {
+  const { id } = await props.searchParams;
+  return <ShareStudio readingId={typeof id === "string" ? id : undefined} />;
 }
