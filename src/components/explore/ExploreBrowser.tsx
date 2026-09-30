@@ -41,35 +41,65 @@ function TrigramSelect({
   );
 }
 
+interface BrowserState {
+  query: string;
+  upper: TrigramKey | null;
+  lower: TrigramKey | null;
+  view: View;
+}
+
+function stateFromParams(params: URLSearchParams): BrowserState {
+  const u = params.get("upper");
+  const l = params.get("lower");
+  return {
+    query: params.get("q") ?? "",
+    upper: isTrigramKey(u) ? u : null,
+    lower: isTrigramKey(l) ? l : null,
+    view: params.get("view") === "matrix" ? "matrix" : "grid",
+  };
+}
+
+function paramsFromState(s: BrowserState): string {
+  const next = new URLSearchParams();
+  if (s.query.trim()) next.set("q", s.query.trim());
+  if (s.upper) next.set("upper", s.upper);
+  if (s.lower) next.set("lower", s.lower);
+  if (s.view === "matrix") next.set("view", "matrix");
+  return next.toString();
+}
+
 export function ExploreBrowser() {
   const params = useSearchParams();
-  const initialUpper = params.get("upper");
-  const initialLower = params.get("lower");
-  const [query, setQuery] = useState(params.get("q") ?? "");
-  const [upper, setUpper] = useState<TrigramKey | null>(isTrigramKey(initialUpper) ? initialUpper : null);
-  const [lower, setLower] = useState<TrigramKey | null>(isTrigramKey(initialLower) ? initialLower : null);
-  const [view, setView] = useState<View>(params.get("view") === "matrix" ? "matrix" : "grid");
+  const paramsKey = params.toString();
+  const [state, setState] = useState<BrowserState>(() => stateFromParams(params));
+  const [seenParams, setSeenParams] = useState(paramsKey);
+  const { query, upper, lower, view } = state;
+
+  // The URL changed underneath us (e.g. a trigram card link on this same page): adopt it,
+  // unless it is just the echo of what we wrote ourselves in the effect below.
+  if (paramsKey !== seenParams) {
+    setSeenParams(paramsKey);
+    if (paramsKey !== paramsFromState(state)) setState(stateFromParams(params));
+  }
 
   useEffect(() => {
-    const next = new URLSearchParams();
-    if (query.trim()) next.set("q", query.trim());
-    if (upper) next.set("upper", upper);
-    if (lower) next.set("lower", lower);
-    if (view === "matrix") next.set("view", "matrix");
-    const qs = next.toString();
+    const qs = paramsFromState(state);
     const url = `${window.location.pathname}${qs ? `?${qs}` : ""}`;
     if (url !== `${window.location.pathname}${window.location.search}`) {
       window.history.replaceState(window.history.state, "", url);
     }
-  }, [query, upper, lower, view]);
+  }, [state]);
+
+  const setQuery = (query: string) => setState((s) => ({ ...s, query }));
+  const setUpper = (upper: TrigramKey | null) => setState((s) => ({ ...s, upper }));
+  const setLower = (lower: TrigramKey | null) => setState((s) => ({ ...s, lower }));
+  const setView = (view: View) => setState((s) => ({ ...s, view }));
 
   const results = useMemo(() => filterHexagrams({ query, upper, lower }), [query, upper, lower]);
   const hasFilter = Boolean(query.trim() || upper || lower);
 
   function reset() {
-    setQuery("");
-    setUpper(null);
-    setLower(null);
+    setState((s) => ({ ...s, query: "", upper: null, lower: null }));
   }
 
   return (
